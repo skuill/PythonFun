@@ -36,21 +36,15 @@ class Client:
                 raise ClientError(answer)
             else:
                 answer_clear = answer_str.replace("\n\n", "").replace("ok", "")
-                print ("HaHa1")
-                print (answer_clear)
-                print ("HaHa2")
+                print ("Answer: {}".format(answer_clear))
                 if answer_clear and answer != "\n":
                     for metric_str in answer_clear.split("\n"):
                         if metric_str:
                             metric_values = metric_str.split(" ")
                             if metric_values[0] in result_dict:
-                                print ("HaHa3")
-                                print (metric_values[0])
                                 result_dict[metric_values[0]].append((int(metric_values[2]), float(metric_values[1])))
                                 result_dict[metric_values[0]].sort(key=lambda tup: tup[0])
                             else:
-                                print ("HaHa4")
-                                print (metric_values[0], metric_values[2], metric_values[1])
                                 result_dict[metric_values[0]] = [(int(metric_values[2]), float(metric_values[1]))]
         except Exception as error:
             raise ClientError(repr(error)) 
