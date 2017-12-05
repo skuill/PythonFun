@@ -38,6 +38,7 @@ class QuickFindUF(UF):
     Quadratic time union. Bad at big N.
     INITIALIZE  | UNION | FIND
     N           | N     | 1
+    M union-find operations on a set of N objects. worst case-time: M*N
     """    
     def __init__(self, N):
         self._id = [x for x in range(N)]
@@ -63,6 +64,7 @@ class QuickUnionUF(UF):
     N           | N     | N
     Union icludes cost of finding roots
     Find in worst case
+    M union-find operations on a set of N objects. worst case-time: M*N
     """    
     def __init__(self, N):
         self._id = [x for x in range(N)]
@@ -90,8 +92,51 @@ class QuickUnionUF(UF):
         self._id[p_id] = q_id 
         
     def __str__(self):
-        return "{}\r\n{}".format(" ".join(str(x) for x in range(N)), " ".join(str(x) for x in self._id))
+        return "ind: {}\r\nval: {}".format(" ".join(str(x) for x in range(N)), " ".join(str(x) for x in self._id))
                 
+    
+class WeighterQU(QuickUnionUF):
+    """
+    Much better than QuickUnionUF
+    INITIALIZE  | UNION | FIND
+    N           | lg N* | lg N
+    * includes cost of finding roots
+    Depts of any node x is at most lg(N)
+    M union-find operations on a set of N objects. worst case-time: N + M * log N
+    """    
+    def __init__(self, N):
+        #sz[i] - count of objects in the tree rooted at i
+        self._sz = [0 for x in range(N)]
+        super(WeighterQU, self).__init__(N)
+        
+    def union(self, p, q):
+        """
+        link root of smaller tree to root of larger tree. Update sz[]
+        """
+        p_id = self._root(p)
+        q_id = self._root(q)
+        if (p_id == q_id):
+            return;
+        if (self._sz[p_id] < self._sz[q_id]):
+            self._id[p_id] = q_id
+            self._sz[q_id] += self._sz[p_id]
+        else:
+            self._id[q_id] = p_id
+            self._sz[p_id] += self._sz[q_id]
+
+class WeighterQUWithPathCompression(WeighterQU):
+    """
+    M union-find operations on a set of N objects. worst case-time: N + M * lg N    
+    """
+    def _root(self, ind):
+        """
+        chase parent pointers until reach root.
+        """
+        while (ind != self._id[ind]):
+            #make every other node in path to point to its grandparent
+            self._id[ind] = self._id[self._id[ind]]
+            ind = self._id[ind]
+        return ind
     
 """
 Test
@@ -99,7 +144,7 @@ Test
 str_N = input("Prompt N: ")
 if str_N:
     N = int(str_N)
-    uf = QuickUnionUF(N)
+    uf = WeighterQUWithPathCompression(N)
     while(True):
         input_str = input("p: ")
         if not input_str:
