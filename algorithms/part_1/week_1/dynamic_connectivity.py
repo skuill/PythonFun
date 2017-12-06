@@ -54,7 +54,7 @@ class QuickFindUF(UF):
                 self._id[i] = q_id
                 
     def __str__(self):
-        return "{}\r\n{}".format(" ".join(str(x) for x in range(N)), " ".join(str(x) for x in self._id))
+        return "{}\r\n{}".format(" ".join(str(x) for x in range(len(self._id))), " ".join(str(x) for x in self._id))
 
 
 class QuickUnionUF(UF):
@@ -92,7 +92,7 @@ class QuickUnionUF(UF):
         self._id[p_id] = q_id 
         
     def __str__(self):
-        return "ind: {}\r\nval: {}".format(" ".join(str(x) for x in range(N)), " ".join(str(x) for x in self._id))
+        return "ind: {}\r\nval: {}".format(" ".join(str(x) for x in range(len(self._id))), " ".join(str(x) for x in self._id))
                 
     
 class WeighterQU(QuickUnionUF):
@@ -141,24 +141,25 @@ class WeighterQUWithPathCompression(WeighterQU):
 """
 Test
 """
-str_N = input("Prompt N: ")
-if str_N:
-    N = int(str_N)
-    uf = WeighterQUWithPathCompression(N)
-    while(True):
-        input_str = input("p: ")
-        if not input_str:
-            break
-        else:
-            p = int(input_str)
-        input_str = input("q: ")
-        if not input_str:
-            break
-        else:
-            q = int(input_str)
+if __name__ == '__main__': 
+    str_N = input("Prompt N: ")
+    if str_N:
+        N = int(str_N)
+        uf = WeighterQUWithPathCompression(N)
+        while(True):
+            input_str = input("p: ")
+            if not input_str:
+                break
+            else:
+                p = int(input_str)
+            input_str = input("q: ")
+            if not input_str:
+                break
+            else:
+                q = int(input_str)
         
-        if (not uf.connected(p, q)):
-            uf.union(p, q);
-            print (uf)
-        else:
-            print('{} and {} already connected'.format(p, q))
+            if (not uf.connected(p, q)):
+                uf.union(p, q);
+                print (uf)
+            else:
+                print('{} and {} already connected'.format(p, q))
